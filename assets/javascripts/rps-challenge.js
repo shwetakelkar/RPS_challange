@@ -86,12 +86,9 @@ $(document).ready(function(){
     */
     $('#choices_one').on("click",'a',function(e){
         choice1 = $(this).text();
-       
-        console.log(choice1);
         var user1 = $("#player_one").text();
         var user2 =$("#player_two").text();
-        console.log(ifOccupiedPlayer1);
-        
+       
         var postData={
             user:user1,
             choice:choice1,
@@ -101,11 +98,8 @@ $(document).ready(function(){
         updates['/user/'+user1]=postData;
         database.ref().update(updates);
         
-        
-        console.log(choice1,choice2);
         if(choice1!=="" && choice2!=="")
         {
-            console.log("for result1")
             var user2 = $("#player_two").text();
             gettingResult(choice1,choice2,user1,user2);
         }
@@ -133,8 +127,6 @@ $(document).ready(function(){
         var updates = {};
         updates['/user/'+user2]=postData;
         database.ref().update(updates);
-        
-        console.log(choice1,choice2);
 
         if(choice1!=="" && choice2!=="")
         {
@@ -157,7 +149,7 @@ updating the chatbot and adding data in dB
             name:chatPlayerName,
             message:message
         })
-        $("chatText").val("");
+        $("#chatText").val("");
 
     })
 /*
@@ -169,7 +161,6 @@ getting the chatbot data and display
 database.ref("/chat").on("child_added",function(snapshot){
     
     if(snapshot.val()){
-        console.log(snapshot.val().message);
        
        $("#member-chat").append(snapshot.val().name+" : "+snapshot.val().message+"\n");
         
@@ -215,17 +206,17 @@ database.ref("/user").on("value",function(snap){
            
             else if (Object.keys(obj1).length === 5)
             {
-                user2Wins=obj1.win;
-                $("#win2").append("Wins: "+user2Wins);
+                user2Win=obj1.win;
+                $("#win2").append(" "+user2Win);
                 user2Losses=obj1.loss;
-                $("#loss2").append("losses: "+user2Losses);
+                $("#loss2").append(" "+user2Losses);
 
             }
-            else if (Object.keys(obj2).length===5){
-                user1Win=obj2.win;
-                $("#win1").append(user1Win);
+            if (Object.keys(obj2).length===5){
+                user1Wins=obj2.win;
+                $("#win1").append(" "+user1Wins);
                 user1Losses=obj2.loss;
-                $("#loss1").append(user1Losses);
+                $("#loss1").append(" "+user1Losses);
 
             }
             
@@ -259,7 +250,6 @@ function gettingResult(choice1,choice2,player1,player2)
         choice2 !== 'Rock')
     )
     {
-        console.log("win");
         $("#result").html("<h2>" + player1+" is winner with choice "+choice1+" over "+choice2+"</h2>");
         (user1Wins)++;
         (user2Losses)++;
@@ -272,7 +262,7 @@ function gettingResult(choice1,choice2,player1,player2)
         (user2Win)++;
         (user1Losses)++;
     }
-    console.log(user2Win,user1Win,user1Losses,user2Losses);
+    console.log(user2Win,user1Wins,user1Losses,user2Losses);
     updatingDB(player2, player1);
     
  
@@ -302,8 +292,8 @@ function updatingUser2Info() {
 -------------------------------------------------
     */
 
-function updatingUser2Info() {
-    chatPlayerName = player;
+function updatingUser1Info() {
+    
     $("#player_one").text(player);
     $("#heading").html("<h2 class= 'ml-5'> Hi " + player + "!! you are player 1 waiting for player2!");
     player1 = player;
