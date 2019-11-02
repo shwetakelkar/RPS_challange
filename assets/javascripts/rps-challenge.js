@@ -28,8 +28,6 @@
     var user2Win=0;
     var user1Losses=0;
     var user2Losses=0;
-    var ifOccupiedPlayer1=false;
-    var ifOccupiedPlayer2=false;
     var numOfCon;
     var messages="";
     var counter=0;
@@ -63,11 +61,11 @@ $(document).ready(function(){
        
         if(numOfCon%2==1){
 
-            updatingUser1Info();
+            updatingUser1Info(player);
            
         }
         else if(numOfCon%2==0){
-            updatingUser2Info();
+            updatingUser2Info(player);
             
         }
         
@@ -91,8 +89,7 @@ $(document).ready(function(){
        
         var postData={
             user:user1,
-            choice:choice1,
-            flag:ifOccupiedPlayer1
+            choice:choice1
         }
         var updates = {};
         updates['/user/'+user1]=postData;
@@ -121,8 +118,7 @@ $(document).ready(function(){
 
         var postData={
             user:user2,
-            choice:choice2,
-            flag:ifOccupiedPlayer2
+            choice:choice2
         }
         var updates = {};
         updates['/user/'+user2]=postData;
@@ -136,9 +132,9 @@ $(document).ready(function(){
         }
     });
 /*
-------------------------------------------
+--------------------------------------------
 updating the chatbot and adding data in dB
------------------------------------------
+--------------------------------------------
 */
 
     $("#chat").on("click",function(e){
@@ -190,9 +186,6 @@ database.ref("/user").on("value",function(snap){
             
             player1 =keys[1];
             player2=keys[0];
-
-            ifOccupiedPlayer1=obj1.flag;
-            ifOccupiedPlayer2=obj2.flag;
             
 
             $("#player_two").text(player2);
@@ -200,11 +193,11 @@ database.ref("/user").on("value",function(snap){
             if(Object.keys(obj1).length===3)
                choice2=obj1.choice
            
-            if(Object.keys(obj2).length === 3)
+            if(Object.keys(obj2).length === 2)
                 choice1=obj2.choice
                 
            
-            else if (Object.keys(obj1).length === 5)
+            if (Object.keys(obj1).length === 4)
             {
                 user2Win=obj1.win;
                 $("#win2").text("Wins: "+user2Win);
@@ -212,7 +205,7 @@ database.ref("/user").on("value",function(snap){
                 $("#loss2").text("Losses: "+user2Losses);
 
             }
-            if (Object.keys(obj2).length===5){
+            if (Object.keys(obj2).length===4){
                 user1Wins=obj2.win;
                 $("#win1").text("Wins: "+user1Wins);
                 user1Losses=obj2.loss;
@@ -273,17 +266,16 @@ function gettingResult(choice1,choice2,player1,player2)
     Player1 iniytial info updating in DB
  -------------------------------------------------
     */
-function updatingUser2Info() {
+function updatingUser2Info(player) {
     $("#player_two").text(player);
     $("#heading").html("<h2 class= 'text-center'> Hi " + player + "!! you are player 2<p> wait for player 1 selection!</p>");
     player2 = player;
-    ifOccupiedPlayer2 = true;
+    // ifOccupiedPlayer2 = true;
     $("#choices_two").append("<li><a href='#' class='a_cls'>Rock</li>");
     $("#choices_two").append("<li><a href='#' class='a_cls'>Paper</li>");
     $("#choices_two").append("<li><a href='#' class='a_cls'>Scissor</li>");
     database.ref("/user/" + player).set({
-        user: player,
-        flag: ifOccupiedPlayer2,
+        user: player  
     });
     userTwoKey = player;
 }
@@ -292,18 +284,17 @@ function updatingUser2Info() {
 -------------------------------------------------
     */
 
-function updatingUser1Info() {
+function updatingUser1Info(player) {
     
     $("#player_one").text(player);
     $("#heading").html("<h2 class= 'ml-5'> Hi " + player + "!! you are player 1 waiting for player2!");
     player1 = player;
-    ifOccupiedPlayer1 = true;
+    // ifOccupiedPlayer1 = true;
     $("#choices_one").append("<li><a href='#' class='a_cls'>Rock</li>");
     $("#choices_one").append("<li><a href='#' class='a_cls'>Paper</li>");
     $("#choices_one").append("<li><a href='#' class='a_cls'>Scissor</li>");
     database.ref("/user/" + player).set({
-        user: player,
-        flag: ifOccupiedPlayer1,
+        user: player,  
     });
     if (!$("#player_two").text() && player2 != "") {
         $("#player_two").text(player2);
@@ -316,14 +307,11 @@ function updatingUser1Info() {
 ---------------------------------------------------*/
 
 function updatingDB(player2, player1) {
-    ifOccupiedPlayer1 = false;
-    ifOccupiedPlayer2 = false;
     choice1 = "";
     choice2 = "";
     var postData = {
         user: player2,
         choice: choice2,
-        flag: ifOccupiedPlayer2,
         win: user2Win,
         loss: user2Losses
     };
@@ -333,7 +321,6 @@ function updatingDB(player2, player1) {
     var postData = {
         user: player1,
         choice: choice1,
-        flag: ifOccupiedPlayer1,
         win: user1Wins,
         loss: user1Losses
     };
