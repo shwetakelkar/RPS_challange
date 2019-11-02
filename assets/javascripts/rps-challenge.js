@@ -207,16 +207,16 @@ database.ref("/user").on("value",function(snap){
             else if (Object.keys(obj1).length === 5)
             {
                 user2Win=obj1.win;
-                $("#win2").append(" "+user2Win);
+                $("#win2").text("Wins: "+user2Win);
                 user2Losses=obj1.loss;
-                $("#loss2").append(" "+user2Losses);
+                $("#loss2").text("Losses: "+user2Losses);
 
             }
             if (Object.keys(obj2).length===5){
                 user1Wins=obj2.win;
-                $("#win1").append(" "+user1Wins);
+                $("#win1").text("Wins: "+user1Wins);
                 user1Losses=obj2.loss;
-                $("#loss1").append(" "+user1Losses);
+                $("#loss1").text("Losses: "+user1Losses);
 
             }
             
