@@ -71,7 +71,7 @@ $(document).ready(function(){
         
         else if(numOfCon>2){
             
-            $("#heading").html("<h2 class= 'text-center'> Hi "+player+"!! you are player 2<p> wait for player 1 selection!</p>");
+            $("#heading").html("<h2 class= 'text-center'>Currently you are in queue <p> please wait for sometime.</p>");
             
         }
         
@@ -83,6 +83,7 @@ $(document).ready(function(){
     -------------------------------------------------
     */
     $('#choices_one').on("click",'a',function(e){
+        
         choice1 = $(this).text();
         var user1 = $("#player_one").text();
         var user2 =$("#player_two").text();
@@ -94,7 +95,7 @@ $(document).ready(function(){
         var updates = {};
         updates['/user/'+user1]=postData;
         database.ref().update(updates);
-        
+        $("#heading").html("<h2 class= 'text-center'> Hi "+user2 + "!!<br>It's Your Turn !!");
         if(choice1!=="" && choice2!=="")
         {
             var user2 = $("#player_two").text();
@@ -103,12 +104,13 @@ $(document).ready(function(){
     });
 
     /*
-    -----------------------------------------------
+    ------------------------------------------------
     when player2 choose out of three option
 
     -------------------------------------------------
     */
     $('#choices_two').on("click",'a',function(e){
+        $("#firstPlayer").css("border-color","#dfdfdf");
         choice2 = $(this).text();
        
         
@@ -221,6 +223,45 @@ function(errorObject) {
     console.log("Errors handled: " + errorObject.code);
 });
 
+/*-----------------------------------------------
+    Player1 iniytial info updating in DB
+ -------------------------------------------------
+    */
+   function updatingUser2Info(player) {
+    $("#player_two").text(player);
+    $("#heading").html("<h2 class= 'text-center'> Hi " + player + "!! you are player 2<p> wait for player1 to choose!</p>");
+    player2 = player;
+    // ifOccupiedPlayer2 = true;
+    $("#choices_two").append("<li><a href='#' class='a_cls'>Rock</li>");
+    $("#choices_two").append("<li><a href='#' class='a_cls'>Paper</li>");
+    $("#choices_two").append("<li><a href='#' class='a_cls'>Scissor</li>");
+    database.ref("/user/" + player).set({
+        user: player  
+    });
+    userTwoKey = player;
+}
+/*-----------------------------------------------
+   Player2 iniytial info updating in DB
+-------------------------------------------------
+    */
+
+function updatingUser1Info(player) {
+    
+    $("#player_one").text(player);
+    $("#heading").html("<h2 class= 'ml-5'> Hi " + player + "!! you are player 1 waiting for player2!");
+    player1 = player;
+    // ifOccupiedPlayer1 = true;
+    $("#choices_one").append("<li><a href='#' class='a_cls'>Rock</li>");
+    $("#choices_one").append("<li><a href='#' class='a_cls'>Paper</li>");
+    $("#choices_one").append("<li><a href='#' class='a_cls'>Scissor</li>");
+    database.ref("/user/" + player).set({
+        user: player,  
+    });
+    if (!$("#player_two").text() && player2 != "") {
+        $("#player_two").text(player2);
+    }
+}
+
 /*
 ---------------------------------------------------
 updating the wins/losses as per the defined rules
@@ -255,51 +296,15 @@ function gettingResult(choice1,choice2,player1,player2)
         (user2Win)++;
         (user1Losses)++;
     }
-    console.log(user2Win,user1Wins,user1Losses,user2Losses);
     updatingDB(player2, player1);
-    
+    $("#firstPlayer").css("border-color","red");
+    $("#heading").html("<h2 class= 'ml-5 text-center'> Hi "+player1 + "!! you are player1.<br>It's Your Turn !!");
+
  
 }
 
 });
-/*-----------------------------------------------
-    Player1 iniytial info updating in DB
- -------------------------------------------------
-    */
-function updatingUser2Info(player) {
-    $("#player_two").text(player);
-    $("#heading").html("<h2 class= 'text-center'> Hi " + player + "!! you are player 2<p> wait for player 1 selection!</p>");
-    player2 = player;
-    // ifOccupiedPlayer2 = true;
-    $("#choices_two").append("<li><a href='#' class='a_cls'>Rock</li>");
-    $("#choices_two").append("<li><a href='#' class='a_cls'>Paper</li>");
-    $("#choices_two").append("<li><a href='#' class='a_cls'>Scissor</li>");
-    database.ref("/user/" + player).set({
-        user: player  
-    });
-    userTwoKey = player;
-}
-/*-----------------------------------------------
-   Player2 iniytial info updating in DB
--------------------------------------------------
-    */
 
-function updatingUser1Info(player) {
-    
-    $("#player_one").text(player);
-    $("#heading").html("<h2 class= 'ml-5'> Hi " + player + "!! you are player 1 waiting for player2!");
-    player1 = player;
-    // ifOccupiedPlayer1 = true;
-    $("#choices_one").append("<li><a href='#' class='a_cls'>Rock</li>");
-    $("#choices_one").append("<li><a href='#' class='a_cls'>Paper</li>");
-    $("#choices_one").append("<li><a href='#' class='a_cls'>Scissor</li>");
-    database.ref("/user/" + player).set({
-        user: player,  
-    });
-    if (!$("#player_two").text() && player2 != "") {
-        $("#player_two").text(player2);
-    }
-}
 
 /*-----------------------------------------------------
 
